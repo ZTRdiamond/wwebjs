@@ -528,6 +528,44 @@ exports.LoadUtils = () => {
         return contacts.map(contact => window.WWebJS.getContactModel(contact));
     };
 
+            window.WWebJS.sendRawMessage = async (chatId, rawMessage, options = {}) => {
+        const chatWid = window.Store.WidFactory.createWid(chatId)
+        const chat = await window.Store.Chat.find(chatWid)
+
+        rawMessage = window.WWebJS.prepareRawMessage(chatId, rawMessage, options)
+
+        if (options.sendSeen) {
+            window.WWebJS.sendSeen(chatId);
+        }
+
+        await window.Store.SendMessage.addAndSendMsgToChat(chat, rawMessage)
+        return rawMessage
+    }
+
+    window.extra = {
+        group: {
+            memberRequest: async (jid) => {
+                return WPP.group.getMembershipRequests(jid)
+            },
+            approve: async (jid, participant) => {
+            return WPP.group.approve(jid, participant)
+        },
+        reject: async (jid, memb) => {
+        return WPP.group.reject(jid, memb)
+        }
+    },
+        theme: window.mR.findModule((module) => module.setTheme && module.getTheme ? module : null),
+        status: {
+        text: async (capt, opt) => {
+        return WPP.status.sendTextStatus(capt, opt)
+        },
+        // masih belum dapat bekerja
+        image: async (base64) => {
+        return WPP.status.sendImageStatus(base64)
+        }
+        }
+    }
+
     window.WWebJS.mediaInfoToFile = ({ data, mimetype, filename }) => {
         const binaryData = window.atob(data);
 
