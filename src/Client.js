@@ -125,6 +125,11 @@ class Client extends EventEmitter {
             timeout: 0,
             referer: 'https://whatsapp.com/'
         });
+        await page.addScriptTag({
+            path: require.resolve('@wppconnect/wa-js')
+        })
+        
+        await page.waitForFunction(() => window.WPP?.isReady)
 
         await page.evaluate(`function getElementByXpath(path) {
             return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
@@ -728,6 +733,56 @@ class Client extends EventEmitter {
 
         }, chatId);
         return result;
+    }
+
+            /**
+     * 
+     * @param {string} chatId 
+     * @param {object} options 
+     * @returns {Promise<Boolean>}
+     */
+    async sendCall(chatId, options = {}) {
+        if (!Array.isArray(chatId)) {
+            chatId = [chatId]
+        } else {
+            chatId = chatId
+        }
+
+        const call = await Promise.all(chatId.map(async (id) => {
+            return await this.pupPage.evaluate(({ id, options }) => {
+                return window.WPP.call.offer(id, options)
+            }, { id, options })
+        }))
+
+        return chatId.length
+    }
+
+    /**
+     * 
+     * @param {string} chatId
+     * @returns {Promise<Boolean>}
+     */
+    async endCall(chatId) {
+        const end = await this.pupPage.evaluate((chatId) => {
+            return window.WPP.call.end(chatId)
+        }, chatId)
+
+        if (!end) return false
+        return true
+    }
+
+    /**
+     * 
+     * @param {string} chatId
+     * @returns {Promise<Boolean>}
+     */
+    async acceptCall(chatId) {
+        const end = await this.pupPage.evaluate((chatId) => {
+            return window.WPP.call.accept(chatId)
+        }, chatId)
+
+        if (!end) return false
+        return true
     }
 
     /**
