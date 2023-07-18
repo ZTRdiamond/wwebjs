@@ -66,9 +66,9 @@ class GroupChat extends Chat {
                 const wid = window.Store.WidFactory.createWid(p);
                 return await window.Store.Contact.get(wid);
             }));
-            await window.Store.GroupParticipants.addParticipants(chat, participants);
-            return { status: 200 };
-        }, this.id._serialized, participantIds);
+            let data = await window.Store.GroupParticipants.addParticipants(chat, participants);
+            return data;
+        }, this.id._serialized, Array.isArray(participantIds) ? participantIds : [participantIds]);
     }
 
     /**
@@ -83,9 +83,9 @@ class GroupChat extends Chat {
             const participants = participantIds.map(p => {
                 return chat.groupMetadata.participants.get(p);
             }).filter(p => Boolean(p));
-            await window.Store.GroupParticipants.removeParticipants(chat, participants);
-            return { status: 200 };
-        }, this.id._serialized, participantIds);
+            let data = await window.Store.GroupParticipants.removeParticipants(chat, participants);
+            return data;
+        }, this.id._serialized, Array.isArray(participantIds) ? participantIds : [participantIds]);
     }
 
     /**
@@ -100,9 +100,9 @@ class GroupChat extends Chat {
             const participants = participantIds.map(p => {
                 return chat.groupMetadata.participants.get(p);
             }).filter(p => Boolean(p));
-            await window.Store.GroupParticipants.promoteParticipants(chat, participants);
-            return { status: 200 };
-        }, this.id._serialized, participantIds);
+            let data = await window.Store.GroupParticipants.promoteParticipants(chat, participants);
+            return data;
+        }, this.id._serialized, Array.isArray(participantIds) ? participantIds : [participantIds]);
     }
 
     /**
@@ -117,9 +117,9 @@ class GroupChat extends Chat {
             const participants = participantIds.map(p => {
                 return chat.groupMetadata.participants.get(p);
             }).filter(p => Boolean(p));
-            await window.Store.GroupParticipants.demoteParticipants(chat, participants);
-            return { status: 200 };
-        }, this.id._serialized, participantIds);
+            let data = await window.Store.GroupParticipants.demoteParticipants(chat, participants);
+            return data;
+        }, this.id._serialized, Array.isArray(participantIds) ? participantIds : [participantIds])
     }
 
     /**
