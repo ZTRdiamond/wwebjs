@@ -73,13 +73,10 @@ exports.ExposeStore = (moduleRaidStr) => {
         window.Store.Chat._find = e => {
             const target = window.Store.Chat.get(e);
             if (window.mR.findModule('ChatCollection')[0] && window.mR.findModule('ChatCollection')[0].ChatCollection) {
-        	if (typeof window.mR.findModule('ChatCollection')[0].ChatCollection.findImpl === 'undefined' && typeof window.mR.findModule('ChatCollection')[0].ChatCollection._find != 'undefined') {
+            	if (typeof window.mR.findModule('ChatCollection')[0].ChatCollection.findImpl === 'undefined' && typeof window.mR.findModule('ChatCollection')[0].ChatCollection._find != 'undefined') {
         		window.mR.findModule('ChatCollection')[0].ChatCollection.findImpl = window.mR.findModule('ChatCollection')[0].ChatCollection._find;
             	}
             }
-            return target ? Promise.resolve(target) : Promise.resolve({
-                id: e
-            });
         };
     }
 
