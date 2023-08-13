@@ -69,15 +69,19 @@ exports.ExposeStore = (moduleRaidStr) => {
         ...window.mR.findModule('sendSetPicture')[0]
     };
 
-    if (!window.Store.Chat._find) {
-        window.Store.Chat._find = e => {
-            const target = window.Store.Chat.get(e);
-            if (window.mR.findModule('ChatCollection')[0] && window.mR.findModule('ChatCollection')[0].ChatCollection) {
-            	if (typeof window.mR.findModule('ChatCollection')[0].ChatCollection.findImpl === 'undefined' && typeof window.mR.findModule('ChatCollection')[0].ChatCollection._find != 'undefined') {
-        		window.mR.findModule('ChatCollection')[0].ChatCollection.findImpl = window.mR.findModule('ChatCollection')[0].ChatCollection._find;
-            	}
-            }
-        };
+    if (!window.Store.Chat._find) { 
+         window.Store.Chat._find = e => { 
+             const target = window.Store.Chat.get(e); 
+             return target ? Promise.resolve(target) : Promise.resolve({ 
+                 id: e 
+             }); 
+         }; 
+    } 
+  
+    if (window.mR.findModule('ChatCollection')[0] && window.mR.findModule('ChatCollection')[0].ChatCollection) { 
+        if (typeof window.mR.findModule('ChatCollection')[0].ChatCollection.findImpl === 'undefined' && typeof window.mR.findModule('ChatCollection')[0].ChatCollection._find != 'undefined') { 
+            window.mR.findModule('ChatCollection')[0].ChatCollection.findImpl = window.mR.findModule('ChatCollection')[0].ChatCollection._find; 
+        } 
     }
 
     // TODO remove these once everybody has been updated to WWebJS with legacy sessions removed
