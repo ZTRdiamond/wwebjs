@@ -904,8 +904,8 @@ class Client extends EventEmitter {
         if (internalOptions.sendMediaAsSticker && internalOptions.attachment) {
             internalOptions.attachment = await Util.formatToWebpSticker(
                 internalOptions.attachment, {
-                    name: options.stickerName,
-                    author: options.stickerAuthor,
+                    packName: options.stickerName,
+                    packPublish: options.stickerAuthor,
                     categories: options.stickerCategories
                 }, this.pupPage
             );
