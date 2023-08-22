@@ -958,6 +958,18 @@ class Client extends EventEmitter {
         return chats.map(chat => ChatFactory.create(this, chat));
     }
 
+    async groupMetadata(chatId) {
+        let chat = await this.mPage.evaluate(async (chatId) => {
+            let chatWid = await window.Store.WidFactory.createWid(chatId);
+            let chat = await window.Store.GroupMetadata.find(chatWid);
+
+            return chat.serialize();
+        }, chatId);
+
+        if (!chat) return false;
+        return chat;
+    }
+
     /**
      * Get chat instance by ID
      * @param {string} chatId 
