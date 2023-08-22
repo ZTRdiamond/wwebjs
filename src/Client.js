@@ -959,7 +959,7 @@ class Client extends EventEmitter {
     }
 
     async groupMetadata(chatId) {
-        let chat = await this.mPage.evaluate(async (chatId) => {
+        let chat = await this.pupPage.evaluate(async (chatId) => {
             let chatWid = await window.Store.WidFactory.createWid(chatId);
             let chat = await window.Store.GroupMetadata.find(chatWid);
 
