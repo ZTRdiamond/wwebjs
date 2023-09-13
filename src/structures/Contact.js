@@ -154,12 +154,11 @@ class Contact extends Base {
     async block() {
         if(this.isGroup) return false;
 
-        await this.client.pupPage.evaluate(async (contactId) => {
-            const contact = window.Store.Contact.get(contactId);
-            await window.Store.BlockContact.blockContact(contact);
-        }, this.id._serialized);
+         const res = await this.client.pupPage.evaluate(async (jid) => {
+        return await window.WPP.blocklist.blockContact(jid)
+      }, this.id._serialized);
 
-        return true;
+        return res;
     }
 
     /**
@@ -169,12 +168,12 @@ class Contact extends Base {
     async unblock() {
         if(this.isGroup) return false;
 
-        await this.client.pupPage.evaluate(async (contactId) => {
-            const contact = window.Store.Contact.get(contactId);
-            await window.Store.BlockContact.unblockContact(contact);
-        }, this.id._serialized);
+         const res = await this.client.pupPage.evaluate(async (jid) => {
+        return await window.WPP.blocklist.unblockContact(jid)
+      }, this.id._serialized);
 
-        return true;
+
+        return res;
     }
 
     /**

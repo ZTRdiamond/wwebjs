@@ -177,7 +177,7 @@ class Client extends EventEmitter {
             }
         );
 
-        const INTRO_IMG_SELECTOR = '[data-testid="intro-md-beta-logo-dark"], [data-testid="intro-md-beta-logo-light"], [data-asset-intro-image-light="true"], [data-asset-intro-image-dark="true"]';
+        const INTRO_IMG_SELECTOR = 'div[role=\'textbox\']';
         const INTRO_QRCODE_SELECTOR = 'div[data-ref] canvas';
 
         // Checks which selector appears first
@@ -363,7 +363,7 @@ class Client extends EventEmitter {
         await page.exposeFunction('onAddMessageEvent', msg => {
             if (msg.type === 'gp2') {
                 const notification = new GroupNotification(this, msg);
-                if (msg.subtype === 'add' || msg.subtype === 'invite') {
+                if (msg.subtype === 'add' || msg.subtype === 'invite' || msg.subtype === "linked_group_join") {
                     /**
                      * Emitted when a user joins the chat via invite link or is added by an admin.
                      * @event Client#group_join
@@ -904,8 +904,8 @@ class Client extends EventEmitter {
         if (internalOptions.sendMediaAsSticker && internalOptions.attachment) {
             internalOptions.attachment = await Util.formatToWebpSticker(
                 internalOptions.attachment, {
-                    name: options.stickerName,
-                    author: options.stickerAuthor,
+                    packName: options.stickerName,
+                    packPublish: options.stickerAuthor,
                     categories: options.stickerCategories
                 }, this.pupPage
             );
@@ -955,6 +955,18 @@ class Client extends EventEmitter {
         });
 
         return chats.map(chat => ChatFactory.create(this, chat));
+    }
+
+    async groupMetadata(chatId) {
+        let chat = await this.pupPage.evaluate(async (chatId) => {
+            let chatWid = await window.Store.WidFactory.createWid(chatId);
+            let chat = await window.Store.GroupMetadata.find(chatWid);
+
+            return chat.serialize();
+        }, chatId);
+
+        if (!chat) return false;
+        return chat;
     }
 
     /**
